@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Login Portal</title>
+<style>
+  body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+  .login-box { background: white; padding: 40px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); width: 320px; }
+  h2 { text-align: center; color: #333; margin-bottom: 24px; }
+  input { width: 100%; padding: 12px; margin: 10px 0; box-sizing: border-box; border: 1px solid #ccc; border-radius: 6px; }
+  button { width: 100%; padding: 12px; background: #0056b3; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: bold; }
+  button:hover { background: #004494; }
+  #message { margin-top: 20px; text-align: center; font-weight: 600; font-size: 15px; }
+</style>
+</head>
+<body>
+<div class="login-box">
+  <h2>Student Login</h2>
+  <input type="text" id="username" placeholder="Username">
+  <input type="password" id="password" placeholder="Password">
+  <button onclick="login()">Login</button>
+  <div id="message"></div>
+</div>
+
+<script>
+  async function login() {
+    const u = document.getElementById('username').value;
+    const p = document.getElementById('password').value;
+    const messageDiv = document.getElementById('message');
+
+    // CHANGE THIS to your own Invoke URL + /login
+    const apiUrl = "https://rdzkm12hsg.execute-api.us-east-1.amazonaws.com/prod/login";
+
+    messageDiv.innerText = "Connecting...";
+    messageDiv.style.color = "#666";
+
+    try {
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: u, password: p })
+      });
+
+      const data = await response.json();
+      const text = data.message || JSON.stringify(data);
+
+      if (response.status === 200) {
+        messageDiv.style.color = "green";
+        messageDiv.innerText = text + " Redirecting...";
+        setTimeout(() => { window.location.href = "dashboard.html"; }, 1500);
+      } else {
+        messageDiv.style.color = "red";
+        messageDiv.innerText = text;
+      }
+    } catch (error) {
+      messageDiv.style.color = "red";
+      messageDiv.innerText = "Error connecting to server.";
+    }
+  }
+</script>
+</body>
+</html>
